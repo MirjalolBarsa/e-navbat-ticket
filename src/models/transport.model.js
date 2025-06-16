@@ -2,15 +2,14 @@ import { Schema, model } from "mongoose";
 
 const transportSchema = new Schema(
   {
-    type: {
-      type: String,
-      required: true,
-      enum: ["bus", "train", "taxi", "plane"],
-    },
     name: {
       type: String,
       required: true,
-      trim: true,
+    },
+    type: {
+      type: String,
+      enum: ["bus", "train", "plane", "taxi"],
+      required: true,
     },
     capacity: {
       type: Number,
@@ -18,9 +17,19 @@ const transportSchema = new Schema(
       min: 1,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
- const Transport =  model("Transport", transportSchema);
+transportSchema.virtual("tickets", {
+  ref: "Ticket",
+  localField: "_id",
+  foreignField: "ticketId",
+});
 
- export default Transport;
+const Transport = model("Transport", transportSchema);
+
+export default Transport;

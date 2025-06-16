@@ -1,18 +1,15 @@
 import { Router } from "express";
-import {
-  createTransport,
-  getAllTransports,
-  getTransportById,
-  updateTransport,
-  deleteTransport,
-} from "../controllers/transport.controller.js";
+import { TransportController } from "../controllers/transport.controller.js";
 
 const router = Router();
 
-router.post("/", createTransport);
-router.get("/", getAllTransports);
-router.get("/:id", getTransportById);
-router.patch("/:id", updateTransport);
-router.delete("/:id", deleteTransport);
+const controller = new TransportController();
+
+router
+  .post("/", controller.createTransport)
+  .get("/", controller.getAllTransports)
+  .get("/:id", controller.getTransportById)
+  .patch("/:id", controller.updateTransport)
+  .delete("/:id", controller.deleteTransport);
 
 export default router;

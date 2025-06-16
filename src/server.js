@@ -1,19 +1,29 @@
 import express from "express";
-import { config } from "dotenv";
+import config from "./config/index.js";
 import { connectDB } from "./db/index.js";
-import transportRouter from "./routes/transport.route.js"
-import ticketRouter from "./routes/ticket.route.js"
-config(); // .env ni o‘qish
+import { createSuperAdmin } from "./db/create-superadmin.js";
+import AdminRouter from './routes/admin.route.js';
+import TransportRouter from './routes/transport.route.js';
+import TicketRouter from './routes/ticket.route.js';
+import CustomerRouter from './routes/customer.route.js';
+import cookieParser from "cookie-parser";
+
+
 const app = express();
+
 app.use(express.json());
 
-await connectDB(); // bu yerda MONGO_URI ishlatiladi
+await connectDB();
+await createSuperAdmin();
 
-const PORT = process.env.PORT || 5000;
+app.use('/admin', AdminRouter);
+app.use('/transport', TransportRouter);
+app.use('/ticket', TicketRouter);
+app.use('/customer', CustomerRouter);
 
-app.use("/transport", transportRouter);
-app.use("/ticket", ticketRouter);
+app.use(cookieParser());
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+
+app.listen(config.PORT, () => {
+  console.log(`Server is running on port ${config.PORT}`);
 });

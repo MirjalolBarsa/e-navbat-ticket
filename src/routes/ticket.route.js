@@ -1,18 +1,14 @@
 import { Router } from "express";
-import {
-  createTicket,
-  getAllTickets,
-  getTicketById,
-  updateTicket,
-  deleteTicket,
-} from "../controllers/ticket.controller.js";
+import { TicketController } from "../controllers/ticket.controller.js";
 
+const controller = new TicketController();
 const router = Router();
 
-router.post("/", createTicket);
-router.get("/", getAllTickets);
-router.get("/:id", getTicketById);
-router.patch("/:id", updateTicket);
-router.delete("/:id", deleteTicket);
+router
+  .post("/", controller.createTicket)
+  .get("/", controller.getAllTickets)
+  .get("/:id", controller.getTicketById)
+  .patch("/:id", controller.updateTicket)
+  .delete("/:id", controller.deleteTicket);
 
 export default router;

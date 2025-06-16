@@ -1,28 +1,17 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
-const ticketSchema = new Schema(
+const TicketSchema = new Schema(
   {
-    passengerName: {
-      type: String,
-      required: true,
-    },
-    seatNumber: {
-      type: String,
-      required: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    transport: {
-      type: Schema.Types.ObjectId,
-      ref: "Transport",
-      required: true,
-    },
+    passengerName: { type: String, required: true },
+    transportId: { type: Types.ObjectId, ref: "Transport", required: true },
+    date: { type: Date, required: true },
+    price: { type: Number, required: true, min: 0 },
+    seatNumber: { type: String }, // ixtiyoriy
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-const Ticket = model("Ticket", ticketSchema);
+const Ticket = model("Ticket", TicketSchema);
 export default Ticket;
