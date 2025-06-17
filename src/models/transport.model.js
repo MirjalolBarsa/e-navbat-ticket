@@ -27,7 +27,7 @@ const transportSchema = new Schema(
 transportSchema.virtual("tickets", {
   ref: "Ticket",
   localField: "_id",
-  foreignField: "ticketId",
+  foreignField: "transportId",
 });
 
 const Transport = model("Transport", transportSchema);

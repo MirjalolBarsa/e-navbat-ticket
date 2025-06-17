@@ -4,8 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "superadmin": "nodemon src/db/create-superadmin.js"
+    "dev": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "",

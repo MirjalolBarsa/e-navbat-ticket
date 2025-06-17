@@ -22,7 +22,7 @@ export class TransportController {
     }
   }
 
-  async getAllTransports(_, res) {
+  async getAllTransports(_req, res) {
     try {
       const transports = await Transport.find().populate("tickets");
       return successRes(res, transports);

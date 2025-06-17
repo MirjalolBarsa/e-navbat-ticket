@@ -4,8 +4,8 @@ export const createAdminValidator = (data) => {
   const admin = Joi.object({
     username: Joi.string().min(4).required(),
     password: Joi.string()
-      .regex(
-        /(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*d)(?=.*[$-,/@$!#.])[A-Za-zd$@$!%*?&.]{8,20}/
+      .pattern(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.,?/\\\-])[A-Za-z\d!@#$%^&*.,?/\\\-]{8,20}$/
       )
       .required(),
   });
@@ -16,8 +16,8 @@ export const updateAdminValidator = (data) => {
   const admin = Joi.object({
     username: Joi.string().min(4).optional(),
     password: Joi.string()
-      .regex(
-        /(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*d)(?=.*[$-,/@$!#.])[A-Za-zd$@$!%*?&.]{8,20}/
+      .pattern(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.,?/\\\-])[A-Za-z\d!@#$%^&*.,?/\\\-]{8,20}$/
       )
       .optional(),
   });
