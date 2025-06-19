@@ -6,7 +6,7 @@ const TicketSchema = new Schema(
     transportId: { type: Types.ObjectId, ref: "Transport", required: true },
     date: { type: Date, required: true },
     price: { type: Number, required: true, min: 0 },
-    seatNumber: { type: String }, // ixtiyoriy
+    seatNumber: { type: String }, 
   },
   {
     timestamps: true,
