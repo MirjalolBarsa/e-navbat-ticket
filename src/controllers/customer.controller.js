@@ -57,7 +57,7 @@ export class CustomerController {
 
   async signIn(req, res) {
     try {
-      const { value, error } = signInCustomerValidator();
+      const { value, error } = signInCustomerValidator(req.body);
       if (error) {
         return handleError(res, error, 422);
       }
@@ -92,7 +92,7 @@ export class CustomerController {
 
   async confirmSignIn(req, res) {
     try {
-      const { value, error } = confirmSignInCustomerValidator();
+      const { value, error } = confirmSignInCustomerValidator(req.body);
       if (error) {
         return handleError(res, error, 422);
       }
@@ -106,8 +106,8 @@ export class CustomerController {
         return handleError(res, "OTP expired", 400);
       }
       const payload = { id: customer.id };
-      const accessToken = await Token.generateAccessToken(payload);
-      const refreshToken = await Token.generateRefreshToken(payload);
+      const accessToken = await token.generateAccessToken(payload);
+      const refreshToken = await token.generateRefreshToken(payload);
       res.cookie("refreshTokenCustomer", refreshToken, {
         httpOnly: true,
         secure: true,
@@ -116,7 +116,7 @@ export class CustomerController {
       return successRes(
         res,
         {
-          data: patient,
+          data: customer,
           token: accessToken,
         },
         201
