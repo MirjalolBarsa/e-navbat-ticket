@@ -39,7 +39,7 @@ export class CustomerController {
       res.cookie("refreshTokenCustomer", refreshToken, {
         httpOnly: true,
         secure: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000, 
+        maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
       return successRes(
@@ -121,6 +121,57 @@ export class CustomerController {
         },
         201
       );
+    } catch (error) {
+      return handleError(res, error);
+    }
+  }
+
+  async newAccessToken(req, res) {
+    try {
+      const refreshToken = req.cookies?.refreshTokenCustomer;
+      if (!refreshToken) {
+        return handleError(res, "Refresh Token expired", 400);
+      }
+      const decodedToken = await token.verifyToken(
+        refreshToken,
+        config.REFRESH_TOKEN_KEY
+      );
+      if (!decodedToken) {
+        return handleError(res, "Invalid token", 404);
+      }
+      const customer = await Customer.findById(decodedToken.id);
+      if (!customer) {
+        return handleError(res, "Customer not found ", 404);
+      }
+      const payload = { id: customer.id };
+      const accessToken = await token.generateAccessToken(payload);
+      return successRes(res, {
+        token: accessToken,
+      });
+    } catch (error) {
+      return handleError(res, error);
+    }
+  }
+
+  async logOut(req, res) {
+    try {
+      const refreshToken = req.cookies?.refreshTokenCustomer;
+      if (!refreshToken) {
+        return handleError(res, "Refresh token epxired", 400);
+      }
+      const decodedToken = await token.verifyToken(
+        refreshToken,
+        config.REFRESH_TOKEN_KEY
+      );
+      if (!decodedToken) {
+        return handleError(res, "Invalid token", 400);
+      }
+      const customer = await Customer.findById(decodedToken.id);
+      if (!customer) {
+        return handleError(res, "Patient not found", 404);
+      }
+      res.clearCookie("refreshTokenPatient");
+      return successRes(res, {});
     } catch (error) {
       return handleError(res, error);
     }
