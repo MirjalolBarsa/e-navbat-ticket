@@ -32,6 +32,88 @@ export class AdminController {
     }
   }
 
+  async signInAdmin(req, res) {
+    try {
+      const { value, error } = createAdminValidator(req.body);
+      if (error) {
+        return handleError(res, error, 422);
+      }
+      const admin = await Admin.findOne({ username: value.username });
+      if (!admin) {
+        return handleError(res, "Admin not found", 404);
+      }
+      const payload = { id: admin._id, role: admin.role };
+      const accessToken = await token.generateAccessToken(payload);
+      const refreshToken = await token.generateRefreshToken(payload);
+      res.cookie("refreshTokenAdmin", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+      return successRes(
+        res,
+        {
+          data: admin,
+          token: accessToken,
+        },
+        200
+      );
+    } catch (error) {
+      return handleError(res, error);
+    }
+  }
+
+  async newAccessToken(req, res) {
+    try {
+      const refreshToken = req.cookies?.refreshTokenAdmin;
+      if (!refreshToken) {
+        return handleError(res, "Refresh token epxired", 400);
+      }
+      const decodedToken = await token.verifyToken(
+        refreshToken,
+        config.REFRESH_TOKEN_KEY
+      );
+      if (!decodedToken) {
+        return handleError(res, "Invalid token", 400);
+      }
+      const admin = await Admin.findById(decodedToken.id);
+      if (!admin) {
+        return handleError(res, "Admin not found", 404);
+      }
+      const payload = { id: admin._id, role: admin.role };
+      const accessToken = await token.generateAccessToken(payload);
+      return successRes(res, {
+        token: accessToken,
+      });
+    } catch (error) {
+      return handleError(res, error);
+    }
+  }
+
+  async logOut(req, res) {
+    try {
+      const refreshToken = req.cookies?.refreshTokenAdmin;
+      if (!refreshToken) {
+        return handleError(res, "Refresh token epxired", 400);
+      }
+      const decodedToken = await token.verifyToken(
+        refreshToken,
+        config.REFRESH_TOKEN_KEY
+      );
+      if (!decodedToken) {
+        return handleError(res, "Invalid token", 400);
+      }
+      const admin = await Admin.findById(decodedToken.id);
+      if (!admin) {
+        return handleError(res, "Admin not found", 404);
+      }
+      res.clearCookie("refreshTokenAdmin");
+      return successRes(res, {});
+    } catch (error) {
+      return handleError(res, error);
+    }
+  }
+
   async getAllAdmins(_, res) {
     try {
       const admins = await Admin.find();
